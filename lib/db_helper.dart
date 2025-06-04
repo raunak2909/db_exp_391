@@ -13,6 +13,15 @@ class DBHelper {
     return DBHelper._();
   }
 
+  ///todos
+  ///todo
+  ///id
+  ///title
+  ///desc
+  ///time
+  ///priority(H<M<L)
+  ///isCompleted (0,1)
+
   Database? db;
   String tableName = "note";
   static final String columnNoteId = "note_id";
@@ -40,21 +49,20 @@ class DBHelper {
   }
 
   ///events (queries)
-  Future<bool> addNote({required String title, required String desc}) async{
+  Future<bool> addNote({required String title, required String desc}) async {
     var db = await initDB();
 
     int rowsEffected = await db.insert(tableName, {
-      columnNoteTitle : title,
-      columnNoteDesc : desc,
-      columnNoteCreatedAt : DateTime.now().millisecondsSinceEpoch.toString(),
+      columnNoteTitle: title,
+      columnNoteDesc: desc,
+      columnNoteCreatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
     });
 
-    return rowsEffected>0;
+    return rowsEffected > 0;
   }
 
   ///fetch all notes
-  Future<List<Map<String, dynamic>>> fetchAllNotes() async{
-
+  Future<List<Map<String, dynamic>>> fetchAllNotes() async {
     var db = await initDB();
 
     List<Map<String, dynamic>> allData = await db.query(tableName);
@@ -63,5 +71,21 @@ class DBHelper {
   }
 
   ///update note
+  Future<bool> updateNote({required String title, required String desc, required int id}) async{
+
+    var db = await initDB();
+    int rowsEffected = await db.update(tableName, {
+      columnNoteTitle: title,
+      columnNoteDesc: desc,
+    }, where: "$columnNoteId = $id");
+
+    return rowsEffected>0;
+  }
+
   ///delete note
+  Future<bool> deleteNote({required int id}) async{
+    var db = await initDB();
+    int rowsEffected = await db.delete(tableName, where: "$columnNoteId = ?", whereArgs: ["$id"]);
+    return rowsEffected>0;
+  }
 }
